@@ -13,13 +13,13 @@ long long fastpow(long long a, long long b) {
 
 
 struct polynomial {
-	long long exponentiation;
+	long long exponentiation = NULL;
 	std::vector <long long> coefficient;
 
 	long long val(long long x) {
 		long long value = 0LL;
 		for (long long i = 0LL; i <= exponentiation; ++i)
-			value += coefficient[i] * fastpow(x, exponentiation - i);
+			value += coefficient[(size_t)i] * fastpow(x, exponentiation - i);
 		return value;
 	}
 
@@ -29,14 +29,14 @@ struct polynomial {
 		reverse(vec1.begin(), vec1.end());
 		reverse(vec2.begin(), vec2.end());
 		for (long long i = 0; i <= std::min(exponentiation, b.exponentiation); ++i)
-			c.coefficient.push_back(vec1[i] + vec2[i]);
+			c.coefficient.push_back(vec1[(size_t)i] + vec2[(size_t)i]);
 		if (exponentiation > b.exponentiation) {
 			for (long long i = b.exponentiation + 1; i <= exponentiation; ++i)
-				c.coefficient.push_back(vec1[i]);
+				c.coefficient.push_back(vec1[(size_t)i]);
 		}
 		else {
 			for (long long i = exponentiation + 1; i <= b.exponentiation; ++i)
-				c.coefficient.push_back(vec2[i]);
+				c.coefficient.push_back(vec2[(size_t)i]);
 		}
 		while (c.coefficient.size() && !c.coefficient[c.coefficient.size() - 1])
 			c.coefficient.pop_back();
@@ -50,7 +50,7 @@ struct polynomial {
 	polynomial dif(polynomial& b) {
 		polynomial c = b;
 		for (long long i = 0; i <= c.exponentiation; ++i)
-			c.coefficient[i] *= (-1);
+			c.coefficient[(size_t)i] *= (-1);
 		return sum(c);
 	}
 
@@ -60,19 +60,19 @@ struct polynomial {
 		reverse(vec1.begin(), vec1.end());
 		reverse(vec2.begin(), vec2.end());
 		while (vec1.size() < vec2.size())
-			vec1.push_back(0);
+			vec1.push_back(0LL);
 		while (vec2.size() < vec1.size())
-			vec2.push_back(0);
-		c.coefficient.resize(vec1.size() + vec2.size(), 0);
-		for (long long i = 0; i < vec1.size(); ++i) {
-			for (long long j = 0; j < vec2.size(); ++j)
+			vec2.push_back(0LL);
+		c.coefficient.resize(vec1.size() + vec2.size(), 0LL);
+		for (size_t i = 0; i < vec1.size(); ++i) {
+			for (size_t j = 0; j < vec2.size(); ++j)
 				c.coefficient[i + j] += vec1[i] * vec2[j];
 		}
 		while (c.coefficient.size() && !c.coefficient[c.coefficient.size() - 1])
 			c.coefficient.pop_back();
 		reverse(c.coefficient.begin(), c.coefficient.end());
 		if (!c.coefficient.size())
-			c.coefficient.push_back(0);
+			c.coefficient.push_back(0LL);
 		c.exponentiation = c.coefficient.size() - 1;
 		return c;
 	}
@@ -89,7 +89,7 @@ struct polynomial {
 				return;
 			}
 			if (exponentiation == 1) {
-				if (coefficient[0] != 1) {
+				if (coefficient[0] != 1LL) {
 					if (coefficient[0] != -1)
 						std::cout << coefficient[0];
 					else
@@ -97,48 +97,48 @@ struct polynomial {
 				}
 				std::cout << 'x';
 				if (coefficient[1]) {
-					if (coefficient[1] > 0)
+					if (coefficient[1] > 0LL)
 						std::cout << '+';
 					std::cout << coefficient[1];
 				}
 				std::cout << '\n';
 				return;
 			}
-			if (coefficient[0] != 1) {
-				if (coefficient[0] != -1)
+			if (coefficient[0] != 1LL) {
+				if (coefficient[0] != -1LL)
 					std::cout << coefficient[0];
 				else
 					std::cout << '-';
 			}
 			std::cout << "x^" << exponentiation;
-			for (long long i = 1; i <= exponentiation - 2; ++i) {
-				if (coefficient[i]) {
-					if (coefficient[i] > 0)
+			for (long long i = 1; i <= exponentiation - 2LL; ++i) {
+				if (coefficient[(size_t)i]) {
+					if (coefficient[(size_t)i] > 0LL)
 						std::cout << '+';
-					if (coefficient[i] == -1)
+					if (coefficient[(size_t)i] == -1LL)
 						std::cout << '-';
 					else {
-						if (coefficient[i] != 1)
-							std::cout << coefficient[i];
+						if (coefficient[(size_t)i] != 1LL)
+							std::cout << coefficient[(size_t)i];
 					}
 					std::cout << "x^" << exponentiation - i;
 				}
 			}
-			if (coefficient[exponentiation - 1]) {
-				if (coefficient[exponentiation - 1] > 0)
+			if (coefficient[(size_t)(exponentiation - 1LL)]) {
+				if (coefficient[(size_t)(exponentiation - 1LL)] > 0LL)
 					std::cout << '+';
-				if (coefficient[exponentiation - 1] == -1)
+				if (coefficient[(size_t)(exponentiation - 1LL)] == -1LL)
 					std::cout << '-';
 				else {
-					if (coefficient[exponentiation - 1] != 1)
-						std::cout << coefficient[exponentiation - 1];
+					if (coefficient[(size_t)(exponentiation - 1LL)] != 1LL)
+						std::cout << coefficient[(size_t)(exponentiation - 1LL)];
 				}
 				std::cout << 'x';
 			}
-			if (coefficient[exponentiation]) {
-				if (coefficient[exponentiation] > 0)
+			if (coefficient[(size_t)exponentiation]) {
+				if (coefficient[(size_t)exponentiation] > 0LL)
 					std::cout << '+';
-				std::cout << coefficient[exponentiation];
+				std::cout << coefficient[(size_t)exponentiation];
 			}
 			std::cout << '\n';
 		}
@@ -148,11 +148,11 @@ struct polynomial {
 polynomial pw(polynomial a, long long k) {
 	if (!k) {
 		polynomial ans;
-		ans.exponentiation = 0;
-		ans.coefficient = { 1 };
+		ans.exponentiation = 0LL;
+		ans.coefficient = { 1LL };
 		return ans;
 	}
-	return k % 2 ? pw(a, k - 1).mul(a) : pw(a.mul(a), k / 2);
+	return k % 2LL ? pw(a, k - 1LL).mul(a) : pw(a.mul(a), k / 2LL);
 }
 
 signed main() {
@@ -162,7 +162,7 @@ signed main() {
 		if (s == "val") {
 			polynomial a;
 			std::cin >> a.exponentiation;
-			a.coefficient.resize(a.exponentiation + 1);
+			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
 			for (size_t i = 0; i < a.coefficient.size(); ++i)
 				std::cin >> a.coefficient[i];
 			long long x;
@@ -178,11 +178,11 @@ signed main() {
 			}
 			polynomial a, b;
 			std::cin >> a.exponentiation;
-			a.coefficient.resize(a.exponentiation + 1);
+			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
 			for (size_t i = 0; i < a.coefficient.size(); ++i)
 				std::cin >> a.coefficient[i];
 			std::cin >> b.exponentiation;
-			b.coefficient.resize(b.exponentiation + 1);
+			b.coefficient.resize((size_t)(b.exponentiation + 1LL));
 			for (size_t i = 0; i < b.coefficient.size(); ++i)
 				std::cin >> b.coefficient[i];
 			a.sum(b).print(t);
@@ -196,11 +196,11 @@ signed main() {
 			}
 			polynomial a, b;
 			std::cin >> a.exponentiation;
-			a.coefficient.resize(a.exponentiation + 1);
+			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
 			for (size_t i = 0; i < a.coefficient.size(); ++i)
 				std::cin >> a.coefficient[i];
 			std::cin >> b.exponentiation;
-			b.coefficient.resize(b.exponentiation + 1);
+			b.coefficient.resize((size_t)(b.exponentiation + 1LL));
 			for (size_t i = 0; i < b.coefficient.size(); ++i)
 				std::cin >> b.coefficient[i];
 			a.dif(b).print(t);
@@ -214,11 +214,11 @@ signed main() {
 			}
 			polynomial a, b;
 			std::cin >> a.exponentiation;
-			a.coefficient.resize(a.exponentiation + 1);
+			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
 			for (size_t i = 0; i < a.coefficient.size(); ++i)
 				std::cin >> a.coefficient[i];
 			std::cin >> b.exponentiation;
-			b.coefficient.resize(b.exponentiation + 1);
+			b.coefficient.resize((size_t)(b.exponentiation + 1LL));
 			for (size_t i = 0; i < b.coefficient.size(); ++i)
 				std::cin >> b.coefficient[i];
 			a.mul(b).print(t);
