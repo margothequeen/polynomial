@@ -1,15 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
-
-
+#include <algorithm>
 long long fastpow(long long a, long long b) {
 	if (!b)
 		return 1LL;
 	return b % 2LL ? a * fastpow(a, b - 1LL) : fastpow(a * a, b / 2LL);
 }
-
 
 
 struct polynomial {
@@ -145,6 +142,72 @@ struct polynomial {
 	}
 };
 
+std::istream& operator>> (std::istream& in, polynomial &pol) {
+	using namespace std;
+	string _str;
+	getline(cin, _str);
+	vector<char> str;
+	for (int i = 0; i < _str.size(); i++) {
+		if (_str[i] != ' ') {
+			str.push_back(_str[i]);
+		}
+	}
+	int cod = 0, pos = 0, num = 0, numc = 0;
+	bool sign = 0;;
+	while (pos < str.size()) {
+		if (str[pos] >= '0' && str[pos] <= '9') {
+			num = num * 10 + (str[pos] - '0');
+			pos++;
+		}
+		else if ((str[pos] >= 'a' && str[pos] <= 'z') || (str[pos] >= 'A' && str[pos] <= 'Z')) {
+			if (sign) {
+				num = -num;
+			}
+			pos++;
+			long long num1 = 1;
+			if (pos < str.size() && str[pos] == '^') {
+				pos++;
+				num1 = 0;
+				while (str[pos] >= '0' && str[pos] <= '9') {
+					num1 = num1 * 10 + (str[pos] - '0');
+					pos++;
+				}
+			}
+			if (pol.exponentiation == NULL) {
+				pol.exponentiation = num1;
+				pol.coefficient.resize(num1 + 1);
+			}
+			for (numc; numc < pol.exponentiation - num1; numc++) {
+				pol.coefficient[numc] = 0;
+			}
+			if (num == 0) {
+				pol.coefficient[numc] = 1;
+			}
+			else {
+				pol.coefficient[numc] = num;
+			}
+			num = 0;
+			numc++;
+		}
+		else if (str[pos] == '-') {
+			sign = 1;
+			pos++;
+		}
+		else if (str[pos] == '+') {
+			sign = 0;
+			pos++;
+		}
+	}
+	if (sign) {
+		num = -num;
+	}
+	for (numc; numc < pol.exponentiation; numc++) {
+		pol.coefficient[numc] = 0;
+	}
+	pol.coefficient[numc] = num;
+	return in;
+}
+
 polynomial pw(polynomial a, long long k) {
 	if (!k) {
 		polynomial ans;
@@ -155,16 +218,16 @@ polynomial pw(polynomial a, long long k) {
 	return k % 2LL ? pw(a, k - 1LL).mul(a) : pw(a.mul(a), k / 2LL);
 }
 
+
 signed main() {
 	std::string s, t;
 	while (true) {
 		std::cin >> s;
 		if (s == "val") {
 			polynomial a;
-			std::cin >> a.exponentiation;
-			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
-			for (size_t i = 0; i < a.coefficient.size(); ++i)
-				std::cin >> a.coefficient[i];
+			std::string q;
+			std::getline(std::cin, q);
+			std::cin >> a;
 			long long x;
 			std::cin >> x;
 			std::cout << a.val(x) << '\n';
@@ -177,14 +240,9 @@ signed main() {
 				std::cin >> t;
 			}
 			polynomial a, b;
-			std::cin >> a.exponentiation;
-			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
-			for (size_t i = 0; i < a.coefficient.size(); ++i)
-				std::cin >> a.coefficient[i];
-			std::cin >> b.exponentiation;
-			b.coefficient.resize((size_t)(b.exponentiation + 1LL));
-			for (size_t i = 0; i < b.coefficient.size(); ++i)
-				std::cin >> b.coefficient[i];
+			std::string q;
+			std::getline(std::cin, q);
+			std::cin >> a >> b;
 			a.sum(b).print(t);
 		}
 		if (s == "dif") {
@@ -195,14 +253,9 @@ signed main() {
 				std::cin >> t;
 			}
 			polynomial a, b;
-			std::cin >> a.exponentiation;
-			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
-			for (size_t i = 0; i < a.coefficient.size(); ++i)
-				std::cin >> a.coefficient[i];
-			std::cin >> b.exponentiation;
-			b.coefficient.resize((size_t)(b.exponentiation + 1LL));
-			for (size_t i = 0; i < b.coefficient.size(); ++i)
-				std::cin >> b.coefficient[i];
+			std::string q;
+			std::getline(std::cin, q);
+			std::cin >> a >> b;
 			a.dif(b).print(t);
 		}
 		if (s == "mul") {
@@ -213,14 +266,9 @@ signed main() {
 				std::cin >> t;
 			}
 			polynomial a, b;
-			std::cin >> a.exponentiation;
-			a.coefficient.resize((size_t)(a.exponentiation + 1LL));
-			for (size_t i = 0; i < a.coefficient.size(); ++i)
-				std::cin >> a.coefficient[i];
-			std::cin >> b.exponentiation;
-			b.coefficient.resize((size_t)(b.exponentiation + 1LL));
-			for (size_t i = 0; i < b.coefficient.size(); ++i)
-				std::cin >> b.coefficient[i];
+			std::string q;
+			std::getline(std::cin, q);
+			std::cin >> a >> b;
 			a.mul(b).print(t);
 		}
 		if (s == "exit")
