@@ -16,8 +16,8 @@ T fastpow(T a, T b) {
 
 template <typename T>
 struct polynomial {
-	T exponentiation = 0;
-	std::vector <T> coefficient = { 0 };
+	T exponentiation = NULL;
+	std::vector <T> coefficient;
 
 	T val(T x) {
 		T value = 0;
