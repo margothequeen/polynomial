@@ -27,56 +27,30 @@ struct polynomial {
 	}
 
 	polynomial <T> operator+(polynomial <T> &b) {
-		polynomial <T> c;
-		std::vector <T> vec1 = coefficient, vec2 = b.coefficient;
-		reverse(vec1.begin(), vec1.end());
-		reverse(vec2.begin(), vec2.end());
-		for (T i = 0; i <= std::min(exponentiation, b.exponentiation); ++i)
-			c.coefficient.push_back(vec1[i] + vec2[i]);
-		if (exponentiation > b.exponentiation) {
-			for (T i = b.exponentiation + 1; i <= exponentiation; ++i)
-				c.coefficient.push_back(vec1[i]);
-		}
-		else {
-			for (T i = exponentiation + 1; i <= b.exponentiation; ++i)
-				c.coefficient.push_back(vec2[i]);
-		}
+		polynomial <T> x = *this, y = b, c;
+		to_strange_view(x, y);
+		for (T i = 0; i <= x.exponentiation; ++i)
+			c.coefficient.push_back(x.coefficient[i] + y.coefficient[i]);
 		c.to_normal_view();
 		return c;
 	}
 
 	polynomial <T> operator-(polynomial <T> &b) {
-		polynomial <T> c;
-		std::vector <T> vec1 = coefficient, vec2 = b.coefficient;
-		reverse(vec1.begin(), vec1.end());
-		reverse(vec2.begin(), vec2.end());
-		for (T i = 0; i <= std::min(exponentiation, b.exponentiation); ++i)
-			c.coefficient.push_back(vec1[i] - vec2[i]);
-		if (exponentiation > b.exponentiation) {
-			for (T i = b.exponentiation + 1; i <= exponentiation; ++i)
-				c.coefficient.push_back(vec1[i]);
-		}
-		else {
-			for (T i = exponentiation + 1; i <= b.exponentiation; ++i)
-				c.coefficient.push_back(-vec2[i]);
-		}
+		polynomial <T> x = *this, y = b, c;
+		to_strange_view(x, y);
+		for (T i = 0; i <= x.exponentiation; ++i)
+			c.coefficient.push_back(x.coefficient[i] - y.coefficient[i]);
 		c.to_normal_view();
 		return c;
 	}
 
 	polynomial <T> operator*(polynomial <T> &b) {
-		polynomial <T> c;
-		std::vector <T> vec1 = coefficient, vec2 = b.coefficient;
-		reverse(vec1.begin(), vec1.end());
-		reverse(vec2.begin(), vec2.end());
-		while (vec1.size() < vec2.size())
-			vec1.push_back(0);
-		while (vec2.size() < vec1.size())
-			vec2.push_back(0);
-		c.coefficient.resize(vec1.size() + vec2.size(), 0);
-		for (size_t i = 0; i < vec1.size(); ++i) {
-			for (size_t j = 0; j < vec2.size(); ++j)
-				c.coefficient[i + j] += vec1[i] * vec2[j];
+		polynomial <T> x = *this, y = b, c;
+		to_strange_view(x, y);
+		c.coefficient.resize(x.coefficient.size() + y.coefficient.size(), 0);
+		for (size_t i = 0; i <= x.exponentiation; ++i) {
+			for (size_t j = 0; j <= y.exponentiation; ++j)
+				c.coefficient[i + j] += x.coefficient[i] * y.coefficient[j];
 		}
 		c.to_normal_view();
 		return c;
@@ -225,6 +199,18 @@ std::istream& operator>> (std::istream& in, polynomial <T> &pol) {
 	}
 	pol.coefficient[numc] = num;
 	return in;
+}
+
+template <typename T>
+void to_strange_view(polynomial <T> &a, polynomial <T> &b) {
+	reverse(a.coefficient.begin(), a.coefficient.end());
+	reverse(b.coefficient.begin(), b.coefficient.end());
+	while (a.coefficient.size() < b.coefficient.size())
+		a.coefficient.push_back(0);
+	while (b.coefficient.size() < a.coefficient.size())
+		b.coefficient.push_back(0);
+	a.exponentiation = a.coefficient.size() - 1;
+	b.exponentiation = b.coefficient.size() - 1;
 }
 
 
