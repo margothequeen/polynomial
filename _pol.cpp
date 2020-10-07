@@ -35,6 +35,14 @@ struct polynomial {
 		return c;
 	}
 
+	void operator+=(polynomial <T> &b) {
+		polynomial <T> y = b;
+		to_strange_view(*this, y);
+		for (T i = 0; i <= this->exponentiation; ++i)
+			this->coefficient[i] += y.coefficient[i];
+		this->to_normal_view();
+	}
+
 	polynomial <T> operator-(polynomial <T> &b) {
 		polynomial <T> x = *this, y = b, c;
 		to_strange_view(x, y);
@@ -42,6 +50,14 @@ struct polynomial {
 			c.coefficient.push_back(x.coefficient[i] - y.coefficient[i]);
 		c.to_normal_view();
 		return c;
+	}
+
+	void operator-=(polynomial <T> &b) {
+		polynomial <T> y = b;
+		to_strange_view(*this, y);
+		for (T i = 0; i <= this->exponentiation; ++i)
+			this->coefficient[i] -= y.coefficient[i];
+		this->to_normal_view();
 	}
 
 	polynomial <T> operator*(polynomial <T> &b) {
@@ -221,10 +237,27 @@ polynomial <T> pw(polynomial <T> a, T k) {
 	return k % 2 ? a * pw(a, k - 1) : pw(a * a, k / 2);
 }
 
+template <typename T>
+polynomial <T> gcd(polynomial <T> &a, polynomial <T> &b) { // doesn't work now
+	while (a.exponentiation && b.exponentiation) {
+		if (a.exponentiation > b.exponentiation)
+			a -= b;
+		else
+			b -= a;
+	}
+	return a + b;	
+}
+
 
 signed main() {
-	std::cout << "available operations:\nval\n+\n-\n*\nexit\n";
 	std::string s, t;
+	std::cout << "do you need only coefficients?\nchoose 'yes' or 'no'\n";
+	std::cin >> t;
+	while (t != "yes" && t != "no") {
+		std::cout << "wrong input\n";
+		std::cin >> t;
+	}
+	std::cout << "available operations:\nval\n+\n-\n*\ngcd\nexit\n";
 	while (true) {
 		std::cin >> s;
 		if (s == "val") {
@@ -237,12 +270,6 @@ signed main() {
 			std::cout << a.val(x) << '\n';
 		}
 		if (s == "+") {
-			std::cout << "do you need only coefficients?\nchoose 'yes' or 'no'\n";
-			std::cin >> t;
-			while (t != "yes" && t != "no") {
-				std::cout << "wrong input\n";
-				std::cin >> t;
-			}
 			polynomial <long long> a, b;
 			std::string q;
 			std::getline(std::cin, q);
@@ -250,12 +277,6 @@ signed main() {
 			(a + b).print(t);
 		}
 		if (s == "-") {
-			std::cout << "do you need only coefficients?\nchoose 'yes' or 'no'\n";
-			std::cin >> t;
-			while (t != "yes" && t != "no") {
-				std::cout << "wrong input\n";
-				std::cin >> t;
-			}
 			polynomial <long long> a, b;
 			std::string q;
 			std::getline(std::cin, q);
@@ -263,17 +284,21 @@ signed main() {
 			(a - b).print(t);
 		}
 		if (s == "*") {
-			std::cout << "do you need only coefficients?\nchoose 'yes' or 'no'\n";
-			std::cin >> t;
-			while (t != "yes" && t != "no") {
-				std::cout << "wrong input\n";
-				std::cin >> t;
-			}
 			polynomial <long long> a, b;
 			std::string q;
 			std::getline(std::cin, q);
 			std::cin >> a >> b;
 			(a * b).print(t);
+		}
+		if (s == "gcd") {
+			std::cout << "sorry, this action temporarily unavailable\n";
+			/*
+			polynomial <long long> a, b;
+			std::string q;
+			std::getline(std::cin, q);
+			std::cin >> a >> b;
+			(gcd(a, b)).print("");
+			*/
 		}
 		if (s == "exit")
 			return 0;
