@@ -42,7 +42,7 @@ signed main() {
 			(a * b).print(t);
 		}
 		if (s == "gcd") {
-			std::cout << "sorry, this action temporarily unavailable\n";
+			std::cout << "sorry, this action is temporarily unavailable\n";
 			/*
 			polynomial <long long> a, b;
 			std::string q;
